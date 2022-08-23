@@ -6,16 +6,24 @@ app.use(cors())
 
 const connect = require("./configs/db");
 const {register, login} = require("./controllers/auth.controller")
-const productsController = require("./controllers/products.controller")
+const booksController = require("./controllers/books.controller");
+app.use("",booksController)
 
 app.post("/register", register)
 app.post("/login", login)
-app.use("/products", productsController)
 
-app.listen(8000, async() => {
+
+
+
+
+
+
+
+
+app.listen(5000, async() => {
     try{
         await connect()
-        console.log("Connected Sucessful on Port 8000")
+        console.log("Connected Sucessful on Port 5000")
     }
     catch(err){
         console.log(err.message)

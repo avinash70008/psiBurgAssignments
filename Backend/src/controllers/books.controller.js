@@ -1,68 +1,46 @@
-const express = require("express");
-const bcrypt = require("bcryptjs")
-const jwt = require("jsonwebtoken");
-const Products = require("../models/product.model")
+const Books= require("../models/books.model")
+const express= require('express')
+const router= express.Router()
 
-require("dotenv").config()
 
-const router = express.Router();
-
-router.post("/addproduct", async(req, res) => {
-    try{
-
-        if(!req.headers.token){
-            return res.send("Please give the token")
-        }
-    
-        const decode = jwt.verify(req.headers.token, process.env.JWT_SECRET_KEY);
-          let product = await Products.create(req.body)
-            return res.send(product)
-      
+router.post("/addbooks", async(req,res)=>{
+    const books = new Books(req.body)
+     try{
+        await books.save()
+       
+        res.status(201).send({books})
+    }catch(e){
+        res.status(500).send(e)
     }
-    catch(err){
-        return res.status(500).send({message : err.message})
-    }
+});
+
+router.get('/getbooks',async(req,res)=>{
+    const booksdetails = await Books.find()
+	res.send(booksdetails)
 })
 
-router.get("/getallproducts", async(req, res) => {
-    try{
-
-        if(!req.headers.token){
-            return res.send("Please give the token")
-        }
-    
-        const decode = jwt.verify(req.headers.token, process.env.JWT_SECRET_KEY);
-        
-       
-            let product = await Products.find()
-            return res.send(product)
-        
-       
-    }
-    catch(err){
-        return res.status(500).send({message : err.message})
-    }
+router.get('/getbooks/:id', (req, res,next) => {
+    Books.findById(req.params.id)
+    .then (result=>{
+        res.status(200).json(result)
+    }).catch(e=>{
+        res.status(500).json({error:e})
+    })
 })
 
-router.patch("/update/:id", async(req, res) => {
-    try{
-
-        if(!req.headers.token){
-            return res.send("Please give the token")
+router.delete('/getbooks/delete/:id', (req, res,next) => {
+    Books.deleteOne({_id: req.params.id})
+    .then (()=>{
+        res.status(200).json({
+            message: 'Deleted!'
+          });
         }
-    
-        const decode = jwt.verify(req.headers.token, process.env.JWT_SECRET_KEY);
-        
-       
-            const product = await Products.findByIdAndUpdate(req.params.id, req.body, {new : true,}).lean().exec()  
-            return res.send(product)
-        
-       
-    }
-    catch(err){
-        return res.status(500).send({message : err.message})
-    }
-})
-
-
-module.exports = router
+        ).catch(
+            (error) => {
+              res.status(400).json({
+                error: error
+              });
+            }
+          );
+        })
+module.exports= router;

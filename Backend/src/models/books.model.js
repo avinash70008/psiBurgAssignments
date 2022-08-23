@@ -1,14 +1,12 @@
 const mongoose = require("mongoose")
 
-const productslist = new mongoose.Schema({
-    Authors:"",
-     Name:"",
-      Age:"",
-     Date_Of_Birth:"",
-    Books: "",
-    Name:"",
-     Published_On:"",
-      Price:""
+const booksSchema = new mongoose.Schema({
+    authers_name : { type : String , required:true },
+    age : { type : Number , required: true },
+    date_of_birth : { type : Number,required: true},
+   book_name : { type : String , required: true},
+   published_date: {type: Number , required: true},
+  price: {type: Number , required: true}
 },
 {
     versionKey : false,
@@ -16,6 +14,8 @@ const productslist = new mongoose.Schema({
 }
 )
 
-const ProductsList = mongoose.model("productslist", productsList);
 
-module.exports = ProductsList
+
+
+const books = mongoose.model("books", booksSchema);
+module.exports= books;
